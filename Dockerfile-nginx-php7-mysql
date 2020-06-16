@@ -1,0 +1,9 @@
+FROM nginx/unit:1.17.0-php7.3
+
+EXPOSE 8080
+
+COPY ./config.json /docker-entrypoint.d/
+
+RUN apt-get update \
+    && apt-get install -y \
+    php7.3-mysql

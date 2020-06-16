@@ -1,0 +1,44 @@
+{
+   "listeners":{
+      "*:8080":{
+          "pass":"routes/app"
+      }
+   },
+   "routes": {
+      "app": [
+         {
+            "match": {
+               "uri": [
+                     "*.php",
+                     "*.php/*"
+               ]
+            },
+            "action": {
+               "pass": "applications/app_direct"
+            }
+         },
+         {
+            "action": {
+               "share": "/home/public",
+               "fallback": {
+                  "pass": "applications/app_index"
+               }
+            }
+         }
+      ]
+  },
+   "applications":{
+      "app_direct": {
+         "type": "php",
+         "root": "/home/public",
+         "user": "root"
+     },
+     "app_index": {
+         "type": "php",
+         "root": "/home/public",
+         "user": "root",
+         "script": "index.php"
+     }
+   },
+    "access_log": "/var/log/access.log"
+ }

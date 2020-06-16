@@ -1,0 +1,28 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository ppa:ondrej/php
+
+RUN apt-get update && apt-get install -y --no-install-recommends php7.3 php7.3-cli php7.3-common
+
+RUN apt-get update \
+    && apt-get install -y \
+    php7.3-mysql \
+    make \
+    php7.3-dev \
+    php-pear \
+    unixodbc-dev \
+    gnupg2 
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y \
+    msodbcsql17 \
+    && pecl install \
+    sqlsrv \
+    pdo_sqlsrv \
+    && printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/7.3/mods-available/sqlsrv.ini \
+    && printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/7.3/mods-available/pdo_sqlsrv.ini \
+    && phpenmod -v 7.3 sqlsrv pdo_sqlsrv
+
+EXPOSE 7373

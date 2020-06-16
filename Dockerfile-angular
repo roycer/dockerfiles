@@ -1,0 +1,3 @@
+FROM node:14.2.0
+WORKDIR /home
+RUN echo n | npm install -g @angular/cli@9.1.5
