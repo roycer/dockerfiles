@@ -1,0 +1,39 @@
+FROM nginx/unit:1.17.0-php7.3
+
+EXPOSE 8080
+
+COPY ./config.json /docker-entrypoint.d/
+
+RUN apt-get update \
+    && apt-get install -y \
+    php-mysql php-mbstring php-xml php-curl php-soap make autoconf zlib1g-dev php-dev php-pear
+
+RUN apt install unzip
+
+RUN pecl install grpc
+RUN echo "extension=grpc.so" >> /etc/php/7.3/mods-available/grpc.ini
+RUN ln -s /etc/php/7.3/mods-available/grpc.ini /etc/php/7.3/cli/conf.d/20-grpc.ini
+
+RUN pecl install protobuf
+RUN echo "extension=protobuf.so" >> /etc/php/7.3/mods-available/protobuf.ini
+RUN ln -s /etc/php/7.3/mods-available/protobuf.ini /etc/php/7.3/cli/conf.d/20-protobuf.ini
+
+ADD instantclient-basic-linux.x64-12.1.0.2.0.zip /tmp
+ADD instantclient-sqlplus-linux.x64-12.1.0.2.0.zip /tmp
+ADD instantclient-sdk-linux.x64-12.1.0.2.0.zip /tmp
+
+RUN mkdir /opt/oracle && \
+    unzip /tmp/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /opt/oracle && \
+    unzip /tmp/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip -d /opt/oracle && \
+    unzip /tmp/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /opt/oracle && \
+    rm -f /tmp/instantclient-basic-linux.x64-12.1.0.2.0.zip /tmp/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip /tmp/instantclient-sdk-linux.x64-12.1.0.2.0.zip && \
+    ln -s /opt/oracle/instantclient_12_1/libclntsh.so.12.1 /opt/oracle/instantclient_12_1/libclntsh.so && \
+    ln -s /opt/oracle/instantclient_12_1/libocci.so.12.1 /opt/oracle/instantclient_12_1/libocci.so
+RUN apt-get update && apt-get install -y libaio1 expect
+ENV LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1:$LD_LIBRARY_PATH
+ENV PATH=/opt/oracle/instantclient_12_1:$PATH
+
+RUN echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8
+RUN echo "extension=oci8.so" >> /etc/php/7.3/mods-available/oci8.ini 
+RUN ln -s /etc/php/7.3/mods-available/oci8.ini /etc/php/7.3/cli/conf.d/20-oci8.ini
+

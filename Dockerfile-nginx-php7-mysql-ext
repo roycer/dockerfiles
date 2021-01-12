@@ -6,4 +6,4 @@ COPY ./config.json /docker-entrypoint.d/
 
 RUN apt-get update \
     && apt-get install -y \
-    php-mysql
+    php-mysql php-mbstring php-xml php-curl php-soap make php-dev php-pear
