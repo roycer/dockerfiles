@@ -1,18 +1,11 @@
 # keep our base image as small as possible
 FROM nginx/unit:1.17.0-php7.3
 
-# port used by the listener in config.json
-EXPOSE 8080
-
-# application setup
-COPY ./docker/config.json /docker-entrypoint.d/
+WORKDIR /home
 
 RUN apt-get update \
     && apt-get install -y \
-    php7.3-mysql \
-    make \
-    php7.3-dev \
-    php-pear \
+    php-mysql php-mbstring php-xml php-curl php-soap make php-dev php-pear \
     unixodbc-dev \
     gnupg2 
 

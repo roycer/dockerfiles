@@ -6,10 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends php7.3 php7.3-c
 
 RUN apt-get update \
     && apt-get install -y \
-    php7.3-mysql \
-    make \
-    php7.3-dev \
-    php-pear \
+    php-mysql php-mbstring php-xml php-curl php-soap make php-dev php-pear \
     unixodbc-dev \
     gnupg2 
 
