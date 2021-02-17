@@ -1,7 +1,11 @@
 # keep our base image as small as possible
 FROM nginx/unit:1.17.0-php7.3
 
-WORKDIR /home
+# port used by the listener in config.json
+EXPOSE 8080
+
+# application setup
+COPY ./config.json /docker-entrypoint.d/
 
 RUN apt-get update \
     && apt-get install -y \
@@ -20,3 +24,5 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/7.3/mods-available/sqlsrv.ini \
     && printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/7.3/mods-available/pdo_sqlsrv.ini \
     && phpenmod -v 7.3 sqlsrv pdo_sqlsrv
+
+RUN sed -i 's,^\(MinProtocol[ ]*=\).*,\1'TLSv1.0',g' /etc/ssl/openssl.cnf
