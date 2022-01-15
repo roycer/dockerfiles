@@ -1,4 +1,4 @@
-FROM nginx/unit:1.17.0-php7.3
+FROM nginx/unit:1.21.0-php7.3
 
 EXPOSE 8080
 
