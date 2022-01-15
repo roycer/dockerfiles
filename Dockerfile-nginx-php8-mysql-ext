@@ -1,0 +1,9 @@
+FROM nginx/unit:1.26.1-php8.0
+
+EXPOSE 8080
+
+COPY ./config.json /docker-entrypoint.d/
+
+RUN apt-get update \
+    && apt-get install -y \
+    php-mysql php-mbstring php-xml php-curl php-soap make php-dev php-pear php-redis
